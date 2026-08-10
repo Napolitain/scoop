@@ -55,7 +55,7 @@ jobs:
           if ($manifest.version -notmatch '^\d+\.\d+\.\d+-main\.\d+\.g[0-9a-f]{7}$' -or
               $manifest.homepage -ne 'https://github.com/Napolitain/winbash' -or
               $manifest.license -ne 'MIT' -or
-              $manifest.depends -ne 'main/uutils-coreutils-lean' -or
+              $manifest.depends -ne 'main/uutils-coreutils' -or
               $manifest.bin -ne 'winbash.exe' -or
               $manifest.architecture.'64bit'.url -ne $expectedArchiveUrl -or
               $manifest.architecture.'64bit'.hash -notmatch '^[0-9a-f]{64}$') {

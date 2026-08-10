@@ -3,7 +3,7 @@
   "description": "A deliberately small zsh-like shell for Windows",
   "homepage": "https://github.com/Napolitain/winbash",
   "license": "MIT",
-  "depends": "main/uutils-coreutils-lean",
+  "depends": "main/uutils-coreutils",
   "architecture": {
     "64bit": {
       "url": "https://github.com/Napolitain/winbash/releases/download/continuous/winbash-0.1.0-main.6.g6a54d77-x86_64-pc-windows-msvc.zip",
