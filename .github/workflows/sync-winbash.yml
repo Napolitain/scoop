@@ -37,7 +37,7 @@ jobs:
           $cacheBuster = "run=$env:GITHUB_RUN_ID"
 
           Invoke-WebRequest `
-              -Uri "$env:MANIFEST_URL?$cacheBuster" `
+              -Uri "$($env:MANIFEST_URL)?$cacheBuster" `
               -Headers @{ 'Cache-Control' = 'no-cache' } `
               -OutFile $downloadPath
           Invoke-WebRequest `
