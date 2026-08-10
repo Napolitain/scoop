@@ -1,0 +1,89 @@
+name: Sync winbash manifest
+
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: "17 * * * *"
+
+permissions:
+  contents: read
+
+concurrency:
+  group: sync-winbash-manifest
+  cancel-in-progress: false
+
+jobs:
+  sync:
+    name: Sync continuous release
+    runs-on: windows-latest
+    permissions:
+      contents: write
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+        with:
+          ref: main
+
+      - name: Download and validate manifest
+        id: manifest
+        shell: pwsh
+        env:
+          MANIFEST_URL: https://github.com/Napolitain/winbash/releases/download/continuous/winbash.json
+        run: |
+          $downloadPath = Join-Path $env:RUNNER_TEMP 'winbash.json'
+          $archivePath = Join-Path $env:RUNNER_TEMP 'winbash.zip'
+          $schemaPath = Join-Path $env:RUNNER_TEMP 'scoop-schema.json'
+          $cacheBuster = "run=$env:GITHUB_RUN_ID"
+
+          Invoke-WebRequest `
+              -Uri "$env:MANIFEST_URL?$cacheBuster" `
+              -Headers @{ 'Cache-Control' = 'no-cache' } `
+              -OutFile $downloadPath
+          Invoke-WebRequest `
+              -Uri "https://raw.githubusercontent.com/ScoopInstaller/Scoop/master/schema.json?$cacheBuster" `
+              -Headers @{ 'Cache-Control' = 'no-cache' } `
+              -OutFile $schemaPath
+
+          $manifestJson = Get-Content -Raw -LiteralPath $downloadPath
+          if (-not (Test-Json -Json $manifestJson -SchemaFile $schemaPath)) {
+              throw 'The downloaded winbash manifest does not satisfy Scoop schema.json.'
+          }
+
+          $manifest = $manifestJson | ConvertFrom-Json
+          $expectedArchiveUrl = "https://github.com/Napolitain/winbash/releases/download/continuous/winbash-$($manifest.version)-x86_64-pc-windows-msvc.zip"
+          if ($manifest.version -notmatch '^\d+\.\d+\.\d+-main\.\d+\.g[0-9a-f]{7}$' -or
+              $manifest.homepage -ne 'https://github.com/Napolitain/winbash' -or
+              $manifest.license -ne 'MIT' -or
+              $manifest.depends -ne 'main/uutils-coreutils-lean' -or
+              $manifest.bin -ne 'winbash.exe' -or
+              $manifest.architecture.'64bit'.url -ne $expectedArchiveUrl -or
+              $manifest.architecture.'64bit'.hash -notmatch '^[0-9a-f]{64}$') {
+              throw 'The downloaded winbash manifest has unexpected release metadata.'
+          }
+
+          Invoke-WebRequest `
+              -Uri "$($manifest.architecture.'64bit'.url)?$cacheBuster" `
+              -Headers @{ 'Cache-Control' = 'no-cache' } `
+              -OutFile $archivePath
+          $archiveHash = (Get-FileHash -LiteralPath $archivePath -Algorithm SHA256).Hash.ToLowerInvariant()
+          if ($archiveHash -ne $manifest.architecture.'64bit'.hash) {
+              throw 'The winbash archive does not match the manifest SHA-256 hash.'
+          }
+
+          Copy-Item -LiteralPath $downloadPath -Destination 'bucket/winbash.json' -Force
+          $changed = [bool](git status --porcelain -- bucket/winbash.json)
+          "changed=$($changed.ToString().ToLowerInvariant())" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+          "version=$($manifest.version)" | Out-File -FilePath $env:GITHUB_OUTPUT -Encoding utf8 -Append
+
+      - name: Commit manifest update
+        if: steps.manifest.outputs.changed == 'true'
+        shell: pwsh
+        env:
+          VERSION: ${{ steps.manifest.outputs.version }}
+        run: |
+          git config user.name 'github-actions[bot]'
+          git config user.email '41898282+github-actions[bot]@users.noreply.github.com'
+          git add -- bucket/winbash.json
+          git commit -m "winbash: Update manifest to $env:VERSION"
+          git push origin HEAD:main
