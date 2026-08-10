@@ -1,13 +1,13 @@
 {
-  "version": "0.1.0-main.6.g6a54d77",
+  "version": "0.1.0-main.8.ga94271e",
   "description": "A deliberately small zsh-like shell for Windows",
   "homepage": "https://github.com/Napolitain/winbash",
   "license": "MIT",
-  "depends": "main/uutils-coreutils-lean",
+  "depends": "main/uutils-coreutils",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/Napolitain/winbash/releases/download/continuous/winbash-0.1.0-main.6.g6a54d77-x86_64-pc-windows-msvc.zip",
-      "hash": "b6a302d34fd2e041328a96379153d8a49e015d234575923a8882fe0fec1249fb"
+      "url": "https://github.com/Napolitain/winbash/releases/download/continuous/winbash-0.1.0-main.8.ga94271e-x86_64-pc-windows-msvc.zip",
+      "hash": "4456f154d620b99e6b8854725ba12c8e538d02fe8558db109edca769b74dce36"
     }
   },
   "bin": "winbash.exe"
