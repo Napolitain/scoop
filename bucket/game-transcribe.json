@@ -1,12 +1,12 @@
 {
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Lightweight offline voice-to-game-chat client for Windows",
   "homepage": "https://github.com/Napolitain/game-transcribe",
   "license": "MIT",
   "architecture": {
     "64bit": {
-      "url": "https://github.com/Napolitain/game-transcribe/releases/download/v0.2.0/game-transcribe-v0.2.0-windows-x64.zip",
-      "hash": "829ac1bac68e8f2e8acbe46705680ef4d20375094ee76e3d0efbb28c419d5a14"
+      "url": "https://github.com/Napolitain/game-transcribe/releases/download/v0.3.0/game-transcribe-v0.3.0-windows-x64.zip",
+      "hash": "8acfbb374da7594064ebb15ff0eb6f45cc79f9968c5bb70f7a8ccafd07ed328c"
     }
   },
   "bin": "game-transcribe.exe",
