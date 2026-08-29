@@ -1,0 +1,34 @@
+{
+  "version": "0.1.0",
+  "description": "Lightweight offline voice-to-game-chat client for Windows",
+  "homepage": "https://github.com/Napolitain/game-transcribe",
+  "license": "MIT",
+  "architecture": {
+    "64bit": {
+      "url": "https://github.com/Napolitain/game-transcribe/releases/download/v0.1.0/game-transcribe-v0.1.0-windows-x64.zip",
+      "hash": "48275faaf72af81e3a89048bc32f6a3f6981b5ce30234b2320a6bd70b6f48144"
+    }
+  },
+  "bin": "game-transcribe.exe",
+  "shortcuts": [
+    [
+      "game-transcribe.exe",
+      "Game Transcribe"
+    ]
+  ],
+  "checkver": "github",
+  "autoupdate": {
+    "architecture": {
+      "64bit": {
+        "url": "https://github.com/Napolitain/game-transcribe/releases/download/v$version/game-transcribe-v$version-windows-x64.zip",
+        "hash": {
+          "url": "$url.sha256"
+        }
+      }
+    }
+  },
+  "notes": [
+    "Launch Game Transcribe from the Start Menu or run 'game-transcribe'.",
+    "The first launch downloads and verifies the selected local speech-recognition model."
+  ]
+}

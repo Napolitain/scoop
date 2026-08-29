@@ -10,6 +10,7 @@ Install an app:
 
 ```powershell
 scoop install napolitain/baremetal-gaming
+scoop install napolitain/game-transcribe
 scoop install napolitain/winbash
 ```
 
